@@ -1,50 +1,61 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Kategori (Relasi Tabel) - PortalBerita')
+@section('title', 'Kelola Kategori - PortalBerita')
 
 @section('content')
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-            <h1 class="h3 fw-bold mb-1">
-                <i class="bi bi-tags text-primary me-2"></i>Manajemen Kategori (Relasi One-to-Many)
+            <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="bi bi-tags text-blue-600 dark:text-sky-400"></i>
+                <span>Manajemen Kategori Berita</span>
             </h1>
-            <p class="text-muted mb-0 small">
-                Satu kategori dapat memiliki banyak artikel berita (<code>Category::hasMany(Article::class)</code>).
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Tambah, ubah, atau hapus kategori berita pada PortalBerita.
             </p>
         </div>
 
-        <a href="{{ route('articles.index') }}" class="btn btn-outline-primary rounded-pill px-4">
-            <i class="bi bi-journal-text me-1"></i>Ke Tabel Artikel
+        <a href="{{ route('articles.index') }}" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+            <i class="bi bi-journal-text mr-1"></i>Ke Tabel Artikel
         </a>
     </div>
 
-    <div class="row g-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <!-- Form Tambah Kategori -->
-        <div class="col-lg-4">
-            <div class="card p-4">
-                <h5 class="fw-bold mb-3">
-                    <i class="bi bi-plus-circle text-primary me-2"></i>Tambah Kategori Baru
+        <div class="lg:col-span-4">
+            <div class="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h5 class="text-base font-extrabold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                    <i class="bi bi-plus-circle text-blue-600 dark:text-sky-400"></i>
+                    <span>Tambah Kategori Baru</span>
                 </h5>
 
-                <form action="{{ route('categories.store') }}" method="POST">
+                <form action="{{ route('categories.store') }}" method="POST" class="space-y-4">
                     @csrf
 
-                    <div class="mb-3">
-                        <label for="name" class="form-label fw-semibold">Nama Kategori <span class="text-danger">*</span></label>
+                    <div>
+                        <label for="name" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">
+                            Nama Kategori <span class="text-rose-500">*</span>
+                        </label>
                         <input
                             type="text"
                             id="name"
                             name="name"
                             value="{{ old('name') }}"
-                            class="form-control"
                             placeholder="Misal: Sains & Inovasi"
                             required
+                            class="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                     </div>
 
-                    <div class="mb-3">
-                        <label for="color" class="form-label fw-semibold">Warna Badge Bootstrap</label>
-                        <select id="color" name="color" class="form-select" required>
+                    <div>
+                        <label for="color" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">
+                            Warna Badge
+                        </label>
+                        <select
+                            id="color"
+                            name="color"
+                            required
+                            class="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
                             <option value="primary">Biru (Primary)</option>
                             <option value="success">Hijau (Success)</option>
                             <option value="danger">Merah (Danger)</option>
@@ -55,122 +66,123 @@
                         </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="description" class="form-label fw-semibold">Deskripsi Singkat</label>
+                    <div>
+                        <label for="description" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">
+                            Deskripsi Singkat
+                        </label>
                         <textarea
                             id="description"
                             name="description"
                             rows="3"
-                            class="form-control"
                             placeholder="Keterangan topik berita pada kategori ini..."
+                            class="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >{{ old('description') }}</textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 rounded-pill fw-semibold">
-                        <i class="bi bi-plus-lg me-1"></i>Simpan Kategori
+                    <button type="submit" class="w-full py-2.5 rounded-full text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-sm transition cursor-pointer">
+                        <i class="bi bi-plus-lg mr-1"></i>Simpan Kategori
                     </button>
                 </form>
             </div>
         </div>
 
         <!-- Tabel Daftar Kategori -->
-        <div class="col-lg-8">
-            <div class="card overflow-hidden">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-4" style="width: 60px;">ID</th>
-                                <th>Kategori & Slug</th>
-                                <th>Deskripsi</th>
-                                <th class="text-center">Jumlah Artikel</th>
-                                <th class="text-end pe-4">Aksi</th>
+        <div class="lg:col-span-8">
+            <div class="rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-slate-100/80 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
+                                <th class="py-3.5 pl-6 pr-3 w-28">UUID</th>
+                                <th class="py-3.5 px-3">Kategori & Slug</th>
+                                <th class="py-3.5 px-3">Deskripsi</th>
+                                <th class="py-3.5 px-3 text-center">Jumlah Artikel</th>
+                                <th class="py-3.5 pl-3 pr-6 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
                             @forelse ($categories as $cat)
-                                <tr>
-                                    <td class="ps-4 text-muted fw-semibold">#{{ $cat->id }}</td>
-                                    <td>
-                                        <span class="badge bg-{{ $cat->color }} rounded-pill px-3 py-2 mb-1">
+                                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+                                    <td class="py-4 pl-6 pr-3 text-xs font-mono text-slate-400" title="{{ $cat->id }}">
+                                        {{ substr($cat->id, 0, 8) }}&hellip;
+                                    </td>
+                                    <td class="py-4 px-3">
+                                        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold mb-1 {{ $cat->tailwindBadgeClass() }}">
                                             {{ $cat->name }}
                                         </span>
-                                        <div class="small text-muted"><code>/{{ $cat->slug }}</code></div>
+                                        <div class="text-xs text-slate-400"><code>/{{ $cat->slug }}</code></div>
                                     </td>
-                                    <td class="small text-secondary" style="max-width: 240px;">
+                                    <td class="py-4 px-3 text-xs text-slate-600 dark:text-slate-400 max-w-xs">
                                         {{ $cat->description ?: '-' }}
                                     </td>
-                                    <td class="text-center">
-                                        <a href="{{ route('home', ['kategori' => $cat->slug]) }}" class="badge bg-light text-dark border rounded-pill px-3 py-2 text-decoration-none">
-                                            <i class="bi bi-file-earmark-text me-1 text-primary"></i>{{ $cat->articles_count }} artikel
+                                    <td class="py-4 px-3 text-center">
+                                        <a href="{{ route('home', ['kategori' => $cat->slug]) }}" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-blue-500 transition">
+                                            <i class="bi bi-file-earmark-text text-blue-600 dark:text-sky-400"></i>
+                                            <span>{{ $cat->articles_count }} artikel</span>
                                         </a>
                                     </td>
-                                    <td class="text-end pe-4">
-                                        <div class="d-inline-flex gap-1">
-                                            <!-- Tombol Modal Edit -->
+                                    <td class="py-4 pl-3 pr-6 text-right">
+                                        <div class="inline-flex items-center gap-1.5">
                                             <button
                                                 type="button"
-                                                class="btn btn-sm btn-outline-primary"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#editCatModal{{ $cat->id }}"
+                                                onclick="openModal('editCatModal{{ $cat->id }}')"
+                                                class="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:hover:bg-blue-900/60 text-blue-600 dark:text-sky-400 transition cursor-pointer"
                                                 title="Edit Kategori"
                                             >
                                                 <i class="bi bi-pencil-square"></i>
                                             </button>
 
-                                            <form action="{{ route('categories.destroy', $cat) }}" method="POST" onsubmit="return confirm('Hapus kategori {{ $cat->name }}? Semua artikel di dalamnya juga akan ikut terhapus (Cascade Delete).')">
+                                            <form action="{{ route('categories.destroy', $cat) }}" method="POST" onsubmit="return confirm('Hapus kategori {{ $cat->name }}? Semua artikel di dalamnya juga akan ikut terhapus.')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus Kategori">
+                                                <button type="submit" class="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 transition cursor-pointer" title="Hapus Kategori">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
                                         </div>
 
                                         <!-- Modal Edit Kategori -->
-                                        <div class="modal fade text-start" id="editCatModal{{ $cat->id }}" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content rounded-4 border-0 shadow">
-                                                    <form action="{{ route('categories.update', $cat) }}" method="POST">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <div class="modal-header border-bottom-0 pb-0">
-                                                            <h5 class="modal-title fw-bold">Edit Kategori: {{ $cat->name }}</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div class="mb-3">
-                                                                <label class="form-label fw-semibold">Nama Kategori</label>
-                                                                <input type="text" name="name" value="{{ $cat->name }}" class="form-control" required>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label class="form-label fw-semibold">Warna Badge</label>
-                                                                <select name="color" class="form-select" required>
-                                                                    @foreach (['primary' => 'Biru (Primary)', 'success' => 'Hijau (Success)', 'danger' => 'Merah (Danger)', 'warning' => 'Kuning (Warning)', 'info' => 'Biru Muda (Info)', 'dark' => 'Hitam (Dark)', 'secondary' => 'Abu-abu (Secondary)'] as $colorKey => $colorLabel)
-                                                                        <option value="{{ $colorKey }}" @selected($cat->color === $colorKey)>
-                                                                            {{ $colorLabel }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                            <div class="mb-2">
-                                                                <label class="form-label fw-semibold">Deskripsi Singkat</label>
-                                                                <textarea name="description" rows="3" class="form-control">{{ $cat->description }}</textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer border-top-0 pt-0">
-                                                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
-                                                            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-semibold">Simpan Perubahan</button>
-                                                        </div>
-                                                    </form>
+                                        <div id="editCatModal{{ $cat->id }}" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 text-left">
+                                            <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-6">
+                                                <div class="flex items-center justify-between mb-4">
+                                                    <h5 class="text-base font-extrabold text-slate-900 dark:text-white">Edit Kategori: {{ $cat->name }}</h5>
+                                                    <button type="button" onclick="closeModal('editCatModal{{ $cat->id }}')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+                                                        <i class="bi bi-x-lg"></i>
+                                                    </button>
                                                 </div>
+                                                <form action="{{ route('categories.update', $cat) }}" method="POST" class="space-y-4">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div>
+                                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Nama Kategori</label>
+                                                        <input type="text" name="name" value="{{ $cat->name }}" required class="w-full px-3.5 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Warna Badge</label>
+                                                        <select name="color" required class="w-full px-3.5 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
+                                                            @foreach (['primary' => 'Biru (Primary)', 'success' => 'Hijau (Success)', 'danger' => 'Merah (Danger)', 'warning' => 'Kuning (Warning)', 'info' => 'Biru Muda (Info)', 'dark' => 'Hitam (Dark)', 'secondary' => 'Abu-abu (Secondary)'] as $colorKey => $colorLabel)
+                                                                <option value="{{ $colorKey }}" @selected($cat->color === $colorKey)>
+                                                                    {{ $colorLabel }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Deskripsi Singkat</label>
+                                                        <textarea name="description" rows="3" class="w-full px-3.5 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">{{ $cat->description }}</textarea>
+                                                    </div>
+                                                    <div class="flex justify-end gap-2 pt-2">
+                                                        <button type="button" onclick="closeModal('editCatModal{{ $cat->id }}')" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer">Batal</button>
+                                                        <button type="submit" class="px-4 py-2 rounded-full text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white cursor-pointer">Simpan Perubahan</button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-4 text-muted">Belum ada kategori.</td>
+                                    <td colspan="5" class="py-10 text-center text-slate-400">Belum ada kategori.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -180,4 +192,3 @@
         </div>
     </div>
 @endsection
-

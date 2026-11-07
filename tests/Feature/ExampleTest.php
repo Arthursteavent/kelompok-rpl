@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -11,7 +12,7 @@ class ExampleTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_home_and_detail_pages_load_with_category_relation(): void
+    public function test_guest_and_user_penglihat_can_view_home_and_detail_pages(): void
     {
         $category = Category::create([
             'name' => 'Teknologi',
@@ -30,6 +31,7 @@ class ExampleTest extends TestCase
             'is_published' => true,
         ]);
 
+        // Guest (tanpa login) bisa membuka beranda & detail berita
         $this->get('/')
             ->assertStatus(200)
             ->assertSee('Artikel Uji Coba Bootstrap 5')
@@ -39,11 +41,94 @@ class ExampleTest extends TestCase
             ->assertStatus(200)
             ->assertSee('Artikel Uji Coba Bootstrap 5')
             ->assertSee('Isi lengkap artikel uji coba.');
+
+        // Guest tidak bisa akses CRUD
+        $this->get('/articles')->assertRedirect('/login');
+        $this->get('/categories')->assertRedirect('/login');
+
+        // User Penglihat (dengan login) bisa baca berita tapi tidak bisa akses CRUD
+        $penglihat = User::factory()->create(['role' => User::ROLE_PENGLIHAT]);
+        $this->actingAs($penglihat)->get('/')->assertStatus(200);
+        $this->actingAs($penglihat)->get('/articles')->assertRedirect('/');
+        $this->actingAs($penglihat)->get('/categories')->assertRedirect('/');
     }
 
-    public function test_crud_article_and_category_work(): void
+    public function test_penulis_can_manage_articles_but_not_categories_page(): void
     {
-        $this->post('/categories', [
+        $penulis = User::factory()->create(['role' => User::ROLE_PENULIS]);
+        $category = Category::create([
+            'name' => 'Sains',
+            'slug' => 'sains',
+            'color' => 'info',
+        ]);
+
+        $this->actingAs($penulis)
+            ->get('/articles')
+            ->assertStatus(200);
+
+        $this->actingAs($penulis)
+            ->post('/articles', [
+                'title' => 'Artikel Karya Penulis',
+                'category_id' => $category->id,
+                'author' => $penulis->name,
+                'content' => 'Isi artikel oleh penulis.',
+                'is_published' => '1',
+            ])
+            ->assertRedirect('/articles');
+
+        $this->actingAs($penulis)
+            ->get('/categories')
+            ->assertRedirect('/');
+
+        // Penulis tidak bisa mengakses halaman pendaftaran user/penulis milik Admin
+        $this->actingAs($penulis)
+            ->get('/users')
+            ->assertRedirect('/');
+    }
+
+    public function test_public_register_only_creates_user_penglihat_and_admin_can_register_penulis_or_user(): void
+    {
+        // Daftar dari halaman user publik otomatis jadi 'penglihat' meskipun mengirim input role 'penulis'
+        $this->post('/register', [
+            'name' => 'Pembaca Baru',
+            'email' => 'pembaca@test.com',
+            'role' => 'penulis',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ])->assertRedirect('/');
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'pembaca@test.com',
+            'role' => User::ROLE_PENGLIHAT,
+        ]);
+
+        // Admin bisa mendaftarkan Penulis atau User di halaman /users
+        $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
+
+        $this->actingAs($admin)
+            ->get('/users')
+            ->assertStatus(200);
+
+        $this->actingAs($admin)
+            ->post('/users', [
+                'name' => 'Penulis Baru',
+                'email' => 'penulisbaru@test.com',
+                'role' => User::ROLE_PENULIS,
+                'password' => 'password123',
+            ])
+            ->assertRedirect('/users');
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'penulisbaru@test.com',
+            'role' => User::ROLE_PENULIS,
+        ]);
+    }
+
+    public function test_admin_can_crud_article_and_category(): void
+    {
+        $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
+
+        $this->actingAs($admin)->post('/categories', [
             'name' => 'Olahraga',
             'color' => 'danger',
             'description' => 'Seputar olahraga',
@@ -51,7 +136,7 @@ class ExampleTest extends TestCase
 
         $category = Category::firstOrFail();
 
-        $this->post('/articles', [
+        $this->actingAs($admin)->post('/articles', [
             'title' => 'Timnas Menang Telak',
             'category_id' => $category->id,
             'author' => 'Redaksi',
@@ -62,7 +147,7 @@ class ExampleTest extends TestCase
         $article = Article::firstOrFail();
         $this->assertEquals($category->id, $article->category_id);
 
-        $this->put("/articles/{$article->id}", [
+        $this->actingAs($admin)->put("/articles/{$article->id}", [
             'title' => 'Timnas Menang Telak (Updated)',
             'category_id' => $category->id,
             'author' => 'Redaksi',
@@ -75,7 +160,7 @@ class ExampleTest extends TestCase
             'title' => 'Timnas Menang Telak (Updated)',
         ]);
 
-        $this->delete("/articles/{$article->id}")
+        $this->actingAs($admin)->delete("/articles/{$article->id}")
             ->assertRedirect('/articles');
 
         $this->assertDatabaseMissing('articles', ['id' => $article->id]);

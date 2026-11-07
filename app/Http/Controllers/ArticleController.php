@@ -41,15 +41,15 @@ class ArticleController extends Controller
             })
             ->latest();
 
-        $headline = null;
-        if (! $activeCategory && $search === '' && ! $request->filled('page')) {
-            $headline = (clone $query)->first();
-        }
-
         $articles = $query
-            ->when($headline, fn ($q) => $q->where('id', '!=', $headline->id))
             ->paginate(6)
             ->withQueryString();
+
+        $sliderArticles = Article::with('category')
+            ->where('is_published', true)
+            ->latest()
+            ->limit(5)
+            ->get();
 
         $popularArticles = Article::with('category')
             ->where('is_published', true)
@@ -59,7 +59,7 @@ class ArticleController extends Controller
 
         return view('articles.home', compact(
             'articles',
-            'headline',
+            'sliderArticles',
             'categories',
             'activeCategory',
             'search',
@@ -239,7 +239,7 @@ class ArticleController extends Controller
     /**
      * Buat slug unik dari judul artikel.
      */
-    private function generateUniqueSlug(string $title, ?int $ignoreId = null): string
+    private function generateUniqueSlug(string $title, ?string $ignoreId = null): string
     {
         $baseSlug = Str::slug($title) ?: 'artikel';
         $slug = $baseSlug;

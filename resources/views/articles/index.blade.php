@@ -3,37 +3,46 @@
 @section('title', 'Kelola Artikel (CRUD) - PortalBerita')
 
 @section('content')
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-            <h1 class="h3 fw-bold mb-1">
-                <i class="bi bi-journal-text text-primary me-2"></i>Manajemen CRUD Artikel
+            <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="bi bi-journal-text text-blue-600 dark:text-sky-400"></i>
+                <span>Manajemen CRUD Artikel</span>
             </h1>
-            <p class="text-muted mb-0 small">
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
                 Kelola daftar berita, tambah artikel baru, ubah konten, atau hapus artikel beserta relasi kategorinya.
             </p>
         </div>
 
-        <div class="d-flex gap-2">
-            <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary rounded-pill px-3">
-                <i class="bi bi-tags me-1"></i>Kelola Kategori
-            </a>
-            <a href="{{ route('articles.create') }}" class="btn btn-primary rounded-pill px-4 fw-semibold">
-                <i class="bi bi-plus-lg me-1"></i>Tambah Artikel
+        <div class="flex flex-wrap items-center gap-2">
+            @if (auth()->user()?->canManageCategories())
+                <a href="{{ route('categories.index') }}" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition">
+                    <i class="bi bi-tags mr-1"></i>Kelola Kategori
+                </a>
+            @endif
+            <a href="{{ route('articles.create') }}" class="px-4 py-2 rounded-full text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-sm transition">
+                <i class="bi bi-plus-lg mr-1"></i>Tambah Artikel
             </a>
         </div>
     </div>
 
     <!-- Filter Bar -->
-    <div class="card p-3 mb-4">
-        <form action="{{ route('articles.index') }}" method="GET" class="row g-2 align-items-center">
-            <div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
-                    <input type="text" name="q" value="{{ $search }}" class="form-control" placeholder="Cari judul artikel atau penulis...">
-                </div>
+    <div class="rounded-2xl p-4 mb-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <form action="{{ route('articles.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-3">
+            <div class="md:col-span-5">
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ $search }}"
+                    placeholder="Cari judul artikel atau penulis..."
+                    class="w-full px-4 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
             </div>
-            <div class="col-md-4">
-                <select name="category_id" class="form-select">
+            <div class="md:col-span-4">
+                <select
+                    name="category_id"
+                    class="w-full px-4 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
                     <option value="">-- Semua Kategori --</option>
                     @foreach ($categories as $cat)
                         <option value="{{ $cat->id }}" @selected((string) $categoryId === (string) $cat->id)>
@@ -42,12 +51,12 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-3 d-flex gap-2">
-                <button type="submit" class="btn btn-dark w-100">
-                    <i class="bi bi-funnel me-1"></i>Filter
+            <div class="md:col-span-3 flex gap-2">
+                <button type="submit" class="flex-1 py-2 px-4 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white dark:bg-blue-600 dark:hover:bg-blue-500 transition cursor-pointer">
+                    <i class="bi bi-funnel mr-1"></i>Filter
                 </button>
                 @if ($search !== '' || $categoryId)
-                    <a href="{{ route('articles.index') }}" class="btn btn-outline-secondary" title="Reset">
+                    <a href="{{ route('articles.index') }}" class="py-2 px-3 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 inline-flex items-center justify-center" title="Reset">
                         <i class="bi bi-arrow-counterclockwise"></i>
                     </a>
                 @endif
@@ -56,77 +65,87 @@
     </div>
 
     <!-- Articles Table -->
-    <div class="card overflow-hidden">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="ps-4" style="width: 60px;">#</th>
-                        <th>Artikel Berita</th>
-                        <th>Kategori (Relasi)</th>
-                        <th>Penulis</th>
-                        <th>Status</th>
-                        <th>Dibaca</th>
-                        <th>Tanggal</th>
-                        <th class="text-end pe-4">Aksi CRUD</th>
+    <div class="rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                    <tr class="bg-slate-100/80 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
+                        <th class="py-3.5 pl-6 pr-3 w-28">UUID</th>
+                        <th class="py-3.5 px-3">Artikel Berita</th>
+                        <th class="py-3.5 px-3">Kategori</th>
+                        <th class="py-3.5 px-3">Penulis</th>
+                        <th class="py-3.5 px-3">Status</th>
+                        <th class="py-3.5 px-3">Dibaca</th>
+                        <th class="py-3.5 px-3">Tanggal</th>
+                        <th class="py-3.5 pl-3 pr-6 text-right">Aksi CRUD</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
                     @forelse ($articles as $article)
-                        <tr>
-                            <td class="ps-4 text-muted fw-semibold">{{ $article->id }}</td>
-                            <td style="max-width: 340px;">
-                                <div class="d-flex align-items-center gap-3">
-                                    @if ($article->image_url)
-                                        <img src="{{ $article->image_url }}" class="rounded-3 flex-shrink-0" style="width: 64px; height: 48px; object-fit: cover;" alt="">
-                                    @else
-                                        <div class="rounded-3 bg-light d-flex align-items-center justify-content-center flex-shrink-0 text-secondary" style="width: 64px; height: 48px;">
-                                            <i class="bi bi-image"></i>
+                        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
+                            <td class="py-4 pl-6 pr-3 text-xs font-mono text-slate-400" title="{{ $article->id }}">
+                                {{ substr($article->id, 0, 8) }}&hellip;
+                            </td>
+                            <td class="py-4 px-3 max-w-sm">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-16 h-12 rounded-xl overflow-hidden bg-slate-200 dark:bg-slate-800 shrink-0">
+                                        @if ($article->image_url)
+                                            <img
+                                                src="{{ $article->image_url }}"
+                                                alt=""
+                                                class="w-full h-full object-cover"
+                                                onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');"
+                                            >
+                                        @endif
+                                        <div class="{{ $article->image_url ? 'hidden' : 'flex' }} w-full h-full items-center justify-center bg-slate-200 dark:bg-slate-800 text-blue-600 dark:text-sky-400">
+                                            <i class="bi bi-newspaper"></i>
                                         </div>
-                                    @endif
-                                    <div>
-                                        <a href="{{ route('articles.show', $article->slug) }}" class="fw-bold text-dark text-decoration-none d-block text-truncate" style="max-width: 250px;">
+                                    </div>
+                                    <div class="min-w-0">
+                                        <a href="{{ route('articles.show', $article->slug) }}" class="font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-sky-400 block truncate">
                                             {{ $article->title }}
                                         </a>
-                                        <span class="text-muted small d-block text-truncate" style="max-width: 250px;">
+                                        <span class="text-xs text-slate-500 dark:text-slate-400 block truncate">
                                             {{ $article->excerpt }}
                                         </span>
                                     </div>
                                 </div>
                             </td>
-                            <td>
-                                <span class="badge bg-{{ $article->category->color }} rounded-pill px-3 py-2">
+                            <td class="py-4 px-3">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold {{ $article->category->tailwindBadgeClass() }}">
                                     {{ $article->category->name }}
                                 </span>
                             </td>
-                            <td class="small">{{ $article->author }}</td>
-                            <td>
+                            <td class="py-4 px-3 text-xs text-slate-700 dark:text-slate-300">{{ $article->author }}</td>
+                            <td class="py-4 px-3">
                                 @if ($article->is_published)
-                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">
-                                        <i class="bi bi-check-circle me-1"></i>Tayang
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400">
+                                        <i class="bi bi-check-circle"></i> Tayang
                                     </span>
                                 @else
-                                    <span class="badge bg-secondary bg-opacity-10 text-secondary">Draft</span>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+                                        Draft
+                                    </span>
                                 @endif
                             </td>
-                            <td class="small text-muted">
-                                <i class="bi bi-eye me-1"></i>{{ number_format($article->views) }}
+                            <td class="py-4 px-3 text-xs text-slate-500 dark:text-slate-400">
+                                <i class="bi bi-eye mr-1"></i>{{ number_format($article->views) }}
                             </td>
-                            <td class="small text-muted">
+                            <td class="py-4 px-3 text-xs text-slate-500 dark:text-slate-400">
                                 {{ $article->created_at->translatedFormat('d M Y') }}
                             </td>
-                            <td class="text-end pe-4">
-                                <div class="d-inline-flex gap-1">
-                                    <a href="{{ route('articles.show', $article->slug) }}" class="btn btn-sm btn-outline-secondary" title="Lihat Detail">
+                            <td class="py-4 pl-3 pr-6 text-right">
+                                <div class="inline-flex items-center gap-1.5">
+                                    <a href="{{ route('articles.show', $article->slug) }}" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition" title="Lihat Detail">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a href="{{ route('articles.edit', $article) }}" class="btn btn-sm btn-outline-primary" title="Edit Artikel">
+                                    <a href="{{ route('articles.edit', $article) }}" class="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:hover:bg-blue-900/60 text-blue-600 dark:text-sky-400 transition" title="Edit Artikel">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
                                     <form action="{{ route('articles.destroy', $article) }}" method="POST" onsubmit="return confirm('Hapus artikel ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus Artikel">
+                                        <button type="submit" class="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 transition cursor-pointer" title="Hapus Artikel">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -135,8 +154,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">
-                                <i class="bi bi-inbox display-6 d-block mb-2"></i>
+                            <td colspan="8" class="py-12 text-center text-slate-400">
+                                <i class="bi bi-inbox text-4xl block mb-2"></i>
                                 Belum ada artikel berita. Silakan tambahkan artikel baru.
                             </td>
                         </tr>
@@ -146,10 +165,9 @@
         </div>
 
         @if ($articles->hasPages())
-            <div class="card-footer bg-white py-3">
+            <div class="p-4 border-t border-slate-200 dark:border-slate-800">
                 {{ $articles->links() }}
             </div>
         @endif
     </div>
 @endsection
-

@@ -3,223 +3,222 @@
 @section('title', 'Tulis Artikel Baru - PortalBerita')
 
 @section('content')
-    <div class="row justify-content-center">
-        <div class="col-lg-9">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="h3 fw-bold mb-1">
-                        <i class="bi bi-plus-circle text-primary me-2"></i>Tulis Artikel Berita Baru
-                    </h1>
-                    <p class="text-muted small mb-0">
-                        Data artikel akan disimpan langsung ke tabel <code>articles</code> di database dan berelasi dengan tabel <code>categories</code>.
-                    </p>
-                </div>
-                <a href="{{ route('articles.index') }}" class="btn btn-outline-secondary rounded-pill px-3">
-                    <i class="bi bi-arrow-left me-1"></i>Kembali
-                </a>
+    <div class="max-w-4xl mx-auto">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="bi bi-plus-circle text-blue-600 dark:text-sky-400"></i>
+                    <span>Tulis Artikel Berita Baru</span>
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                    Publikasikan artikel berita terbaru ke PortalBerita.
+                </p>
             </div>
+            <a href="{{ route('articles.index') }}" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+                <i class="bi bi-arrow-left mr-1"></i>Kembali
+            </a>
+        </div>
 
-            @if ($categories->isEmpty())
-                <div class="alert alert-warning rounded-4 border-0 shadow-sm d-flex align-items-center justify-content-between mb-4">
-                    <div>
-                        <i class="bi bi-info-circle-fill me-2"></i>
-                        <strong>Tabel Kategori masih kosong.</strong> Silakan buat minimal 1 kategori terlebih dahulu agar artikel memiliki relasi tabel.
-                    </div>
-                    <button type="button" class="btn btn-sm btn-dark rounded-pill px-3 fw-semibold" data-bs-toggle="modal" data-bs-target="#quickAddCategoryModal">
-                        <i class="bi bi-plus-lg me-1"></i>Buat Kategori
-                    </button>
+        @if ($categories->isEmpty())
+            <div class="mb-6 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 flex flex-wrap items-center justify-between gap-3">
+                <div class="text-xs sm:text-sm">
+                    <i class="bi bi-info-circle-fill mr-1"></i>
+                    <strong>Tabel Kategori masih kosong.</strong> Silakan buat minimal 1 kategori terlebih dahulu agar artikel memiliki relasi tabel.
                 </div>
-            @endif
+                <button type="button" onclick="openModal('quickAddCategoryModal')" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition cursor-pointer">
+                    <i class="bi bi-plus-lg mr-1"></i>Buat Kategori
+                </button>
+            </div>
+        @endif
 
-            <div class="card p-4 p-md-5">
-                <form action="{{ route('articles.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
+        <div class="rounded-3xl p-6 sm:p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <form action="{{ route('articles.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
+                @csrf
 
-                    <div class="row g-3">
-                        <!-- Judul Artikel -->
-                        <div class="col-12">
-                            <label for="title" class="form-label fw-semibold">Judul Artikel <span class="text-danger">*</span></label>
-                            <input
-                                type="text"
-                                id="title"
-                                name="title"
-                                value="{{ old('title') }}"
-                                class="form-control form-control-lg @error('title') is-invalid @enderror"
-                                placeholder="Masukkan judul berita..."
-                                required
-                            >
-                            @error('title')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                <!-- Judul Artikel -->
+                <div>
+                    <label for="title" class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+                        Judul Artikel <span class="text-rose-500">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        value="{{ old('title') }}"
+                        placeholder="Masukkan judul berita..."
+                        required
+                        class="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
 
-                        <!-- Kategori (Relasi Foreign Key) -->
-                        <div class="col-md-6">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <label for="category_id" class="form-label fw-semibold">Kategori Berita <span class="text-danger">*</span></label>
-                                <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none" data-bs-toggle="modal" data-bs-target="#quickAddCategoryModal">
-                                    + Tambah Kategori Baru
-                                </button>
-                            </div>
-                            <select
-                                id="category_id"
-                                name="category_id"
-                                class="form-select @error('category_id') is-invalid @enderror"
-                                required
-                            >
-                                <option value="">-- Pilih Kategori dari Database --</option>
-                                @foreach ($categories as $cat)
-                                    <option value="{{ $cat->id }}" @selected(old('category_id') == $cat->id)>
-                                        {{ $cat->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('category_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Penulis -->
-                        <div class="col-md-6">
-                            <label for="author" class="form-label fw-semibold">Nama Penulis <span class="text-danger">*</span></label>
-                            <input
-                                type="text"
-                                id="author"
-                                name="author"
-                                value="{{ old('author') }}"
-                                class="form-control @error('author') is-invalid @enderror"
-                                placeholder="Masukkan nama penulis..."
-                                required
-                            >
-                            @error('author')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Gambar via URL atau Upload File -->
-                        <div class="col-md-6">
-                            <label for="image_url" class="form-label fw-semibold">URL Gambar Sampul (Opsional)</label>
-                            <input
-                                type="url"
-                                id="image_url"
-                                name="image_url"
-                                value="{{ old('image_url') }}"
-                                class="form-control @error('image_url') is-invalid @enderror"
-                                placeholder="https://..."
-                            >
-                            <div class="form-text">Masukkan link gambar atau unggah file di sebelah kanan.</div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="image_file" class="form-label fw-semibold">Atau Upload File Gambar (Opsional)</label>
-                            <input
-                                type="file"
-                                id="image_file"
-                                name="image_file"
-                                accept="image/*"
-                                class="form-control @error('image_file') is-invalid @enderror"
-                            >
-                            <div class="form-text">Format JPG, PNG, WebP (Maks. 2MB).</div>
-                        </div>
-
-                        <!-- Ringkasan (Excerpt) -->
-                        <div class="col-12">
-                            <label for="excerpt" class="form-label fw-semibold">Ringkasan Singkat (Opsional)</label>
-                            <textarea
-                                id="excerpt"
-                                name="excerpt"
-                                rows="2"
-                                class="form-control @error('excerpt') is-invalid @enderror"
-                                placeholder="Ringkasan singkat (otomatis diambil dari isi berita jika dikosongkan)"
-                            >{{ old('excerpt') }}</textarea>
-                        </div>
-
-                        <!-- Isi Berita Lengkap -->
-                        <div class="col-12">
-                            <label for="content" class="form-label fw-semibold">Isi Berita Lengkap <span class="text-danger">*</span></label>
-                            <textarea
-                                id="content"
-                                name="content"
-                                rows="9"
-                                class="form-control @error('content') is-invalid @enderror"
-                                placeholder="Tuliskan isi berita atau artikel secara lengkap di sini..."
-                                required
-                            >{{ old('content') }}</textarea>
-                            @error('content')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Status Publikasi -->
-                        <div class="col-12">
-                            <div class="form-check form-switch">
-                                <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    role="switch"
-                                    id="is_published"
-                                    name="is_published"
-                                    value="1"
-                                    @checked(old('is_published', true))
-                                >
-                                <label class="form-check-label fw-medium" for="is_published">
-                                    Langsung tayangkan artikel di halaman utama
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Submit Buttons -->
-                        <div class="col-12 pt-3 border-top d-flex justify-content-end gap-2">
-                            <a href="{{ route('articles.index') }}" class="btn btn-light rounded-pill px-4">Batal</a>
-                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-semibold">
-                                <i class="bi bi-send-check me-1"></i>Simpan ke Database
+                <!-- Kategori & Penulis -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="category_id" class="text-sm font-bold text-slate-700 dark:text-slate-200">
+                                Kategori Berita <span class="text-rose-500">*</span>
+                            </label>
+                            <button type="button" onclick="openModal('quickAddCategoryModal')" class="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline cursor-pointer">
+                                + Tambah Kategori Baru
                             </button>
                         </div>
+                        <select
+                            id="category_id"
+                            name="category_id"
+                            required
+                            class="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">-- Pilih Kategori dari Database --</option>
+                            @foreach ($categories as $cat)
+                                <option value="{{ $cat->id }}" @selected(old('category_id') == $cat->id)>
+                                    {{ $cat->name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-                </form>
-            </div>
+
+                    <div>
+                        <label for="author" class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+                            Nama Penulis <span class="text-rose-500">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="author"
+                            name="author"
+                            value="{{ old('author', auth()->user()?->name) }}"
+                            placeholder="Masukkan nama penulis..."
+                            required
+                            class="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                    </div>
+                </div>
+
+                <!-- Gambar via URL atau Upload File -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label for="image_url" class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+                            URL Gambar Sampul (Opsional)
+                        </label>
+                        <input
+                            type="url"
+                            id="image_url"
+                            name="image_url"
+                            value="{{ old('image_url') }}"
+                            placeholder="https://..."
+                            class="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                        <p class="text-[11px] text-slate-400 mt-1">Jika dikosongkan akan menampilkan ilustrasi default PortalBerita.</p>
+                    </div>
+
+                    <div>
+                        <label for="image_file" class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+                            Atau Upload File Gambar (Opsional)
+                        </label>
+                        <input
+                            type="file"
+                            id="image_file"
+                            name="image_file"
+                            accept="image/*"
+                            class="w-full px-3 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+                        >
+                        <p class="text-[11px] text-slate-400 mt-1">Format JPG, PNG, WebP (Maks. 2MB).</p>
+                    </div>
+                </div>
+
+                <!-- Ringkasan (Excerpt) -->
+                <div>
+                    <label for="excerpt" class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+                        Ringkasan Singkat (Opsional)
+                    </label>
+                    <textarea
+                        id="excerpt"
+                        name="excerpt"
+                        rows="2"
+                        placeholder="Ringkasan singkat (otomatis diambil dari isi berita jika dikosongkan)"
+                        class="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >{{ old('excerpt') }}</textarea>
+                </div>
+
+                <!-- Isi Berita Lengkap -->
+                <div>
+                    <label for="content" class="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+                        Isi Berita Lengkap <span class="text-rose-500">*</span>
+                    </label>
+                    <textarea
+                        id="content"
+                        name="content"
+                        rows="9"
+                        placeholder="Tuliskan isi berita atau artikel secara lengkap di sini..."
+                        required
+                        class="w-full px-4 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >{{ old('content') }}</textarea>
+                </div>
+
+                <!-- Status Publikasi -->
+                <div class="flex items-center gap-2.5">
+                    <input
+                        type="checkbox"
+                        id="is_published"
+                        name="is_published"
+                        value="1"
+                        @checked(old('is_published', true))
+                        class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+                    >
+                    <label for="is_published" class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                        Langsung tayangkan artikel di halaman utama
+                    </label>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3">
+                    <a href="{{ route('articles.index') }}" class="px-5 py-2.5 rounded-full text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+                        Batal
+                    </a>
+                    <button type="submit" class="px-6 py-2.5 rounded-full text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-sm transition cursor-pointer">
+                        <i class="bi bi-send-check mr-1"></i>Simpan ke Database
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     <!-- Modal Tambah Kategori Cepat -->
-    <div class="modal fade" id="quickAddCategoryModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 border-0 shadow">
-                <form action="{{ route('categories.store') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="from_article_form" value="1">
-                    <div class="modal-header border-bottom-0 pb-0">
-                        <h5 class="modal-title fw-bold">Tambah Kategori ke Database</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Nama Kategori <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control" placeholder="Masukkan nama kategori..." required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Warna Badge</label>
-                            <select name="color" class="form-select" required>
-                                <option value="primary">Biru (Primary)</option>
-                                <option value="success">Hijau (Success)</option>
-                                <option value="danger">Merah (Danger)</option>
-                                <option value="warning">Kuning (Warning)</option>
-                                <option value="info">Biru Muda (Info)</option>
-                                <option value="dark">Hitam (Dark)</option>
-                                <option value="secondary">Abu-abu (Secondary)</option>
-                            </select>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label fw-semibold">Deskripsi Singkat</label>
-                            <textarea name="description" rows="2" class="form-control" placeholder="Deskripsi kategori (opsional)"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-top-0 pt-0">
-                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-semibold">Simpan Kategori</button>
-                    </div>
-                </form>
+    <div id="quickAddCategoryModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4">
+        <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h5 class="text-base font-extrabold text-slate-900 dark:text-white">Tambah Kategori ke Database</h5>
+                <button type="button" onclick="closeModal('quickAddCategoryModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
+            <form action="{{ route('categories.store') }}" method="POST" class="space-y-4">
+                @csrf
+                <input type="hidden" name="from_article_form" value="1">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Nama Kategori *</label>
+                    <input type="text" name="name" required placeholder="Masukkan nama kategori..." class="w-full px-3.5 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Warna Badge</label>
+                    <select name="color" required class="w-full px-3.5 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
+                        <option value="primary">Biru (Primary)</option>
+                        <option value="success">Hijau (Success)</option>
+                        <option value="danger">Merah (Danger)</option>
+                        <option value="warning">Kuning (Warning)</option>
+                        <option value="info">Biru Muda (Info)</option>
+                        <option value="dark">Hitam (Dark)</option>
+                        <option value="secondary">Abu-abu (Secondary)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Deskripsi Singkat</label>
+                    <textarea name="description" rows="2" placeholder="Deskripsi kategori (opsional)" class="w-full px-3.5 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('quickAddCategoryModal')" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer">Batal</button>
+                    <button type="submit" class="px-4 py-2 rounded-full text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white cursor-pointer">Simpan Kategori</button>
+                </div>
+            </form>
         </div>
     </div>
 @endsection

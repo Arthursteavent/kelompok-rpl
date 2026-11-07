@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('articles', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('category_id')->constrained('categories')->cascadeOnDelete();
             $table->string('title');
             $table->string('slug')->unique();
             $table->string('author')->default('Redaksi');
@@ -34,4 +34,3 @@ return new class extends Migration
         Schema::dropIfExists('articles');
     }
 };
-

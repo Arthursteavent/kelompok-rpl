@@ -93,7 +93,7 @@ class CategoryController extends Controller
             ->with('success', "Kategori \"{$name}\" berhasil dihapus.");
     }
 
-    private function generateUniqueSlug(string $name, ?int $ignoreId = null): string
+    private function generateUniqueSlug(string $name, ?string $ignoreId = null): string
     {
         $baseSlug = Str::slug($name) ?: 'kategori';
         $slug = $baseSlug;

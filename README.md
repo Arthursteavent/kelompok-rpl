@@ -1,58 +1,81 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PortalBerita - Aplikasi Portal Informasi & Blog Mini (Proyek Kelompok RPL)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi web portal berita berbasis **Laravel** dan **Tailwind CSS** (mendukung *Tema Terang & Gelap / Dark Mode*), dilengkapi sistem **Autentikasi Multi-Role** (Admin, Penulis, dan User Penglihat), keamanan **UUID** pada seluruh tabel, manajemen artikel (CRUD), manajemen kategori berita, serta manajemen pengguna.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Daftar Akun Default (Seeder)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Setelah menjalankan migrasi dan seeder database (`php artisan migrate:fresh --seed`), Anda dapat login melalui halaman `/login` menggunakan akun berikut:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Role | Nama Pengguna | Email | Password | Hak Akses |
+| :--- | :--- | :--- | :--- | :--- |
+| **Admin** | `Admin PortalBerita` | `admin@portalberita.com` | `password` | Akses penuh: CRUD Artikel, CRUD Kategori, Kelola/Daftarkan Akun Penulis & User, serta membaca berita. |
+| **Penulis** | `Penulis Redaksi` | `penulis@portalberita.com` | `password` | Menulis artikel baru, mengedit & mengelola daftar artikel (CRUD Artikel), tambah kategori cepat, serta membaca berita. |
+| **User Penglihat** | `User Penglihat` | `user@portalberita.com` | `password` | Membaca berita, memfilter kategori, dan mencari artikel (pengunjung juga dapat membaca berita tanpa login). |
 
-## Learning Laravel
+> **Catatan:** Pendaftaran akun melalui halaman publik (`/register`) otomatis terdaftar sebagai **User Penglihat**. Penambahan akun dengan role **Penulis** atau **Admin** hanya dapat dilakukan oleh Admin melalui menu **Daftar Penulis/User** (`/users`).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Fitur Utama
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+1. **Halaman Publik & Beranda Berita (`/`)**
+   - Header bergaya portal berita dengan navigasi kategori horizontal, kotak pencarian langsung, dan tombol ganti **Tema Terang / Gelap (Light & Dark Mode)**.
+   - Banner *auto-slider* untuk sorotan berita terbaru yang bergeser otomatis kanan-kiri.
+   - Daftar artikel dengan *pagination* Tailwind, pencarian kata kunci (`?q=...`), dan filter berdasarkan kategori (`?kategori=...`).
+   - *Placeholder* ilustrasi otomatis apabila artikel tidak memiliki gambar atau URL gambar gagal dimuat.
+   - Daftar berita terpopuler berdasarkan jumlah pembaca (*views*) dan *footer* portal berita lengkap.
+2. **Keamanan Database dengan UUID (`HasUuids`)**
+   - Seluruh tabel utama (`users`, `categories`, `articles`) menggunakan **UUID** sebagai *primary key* dan *foreign key* agar ID tidak mudah ditebak pada URL.
+3. **Sistem Autentikasi Multi-Role (`/login` & `/register`)**
+   - Pengunjung dapat membaca berita secara langsung tanpa login (*mode penglihat*) atau login menggunakan akun.
+   - Proteksi rute (*route middleware*) berbasis role (`role:admin,penulis` dan `role:admin`).
+4. **Manajemen Artikel (`/articles`)** — *Admin & Penulis*
+   - Tambah, lihat, ubah, dan hapus artikel berita (mendukung upload file gambar atau URL gambar).
+5. **Manajemen Kategori (`/categories`)** — *Admin*
+   - Kelola daftar kategori berita beserta warna badge-nya.
+6. **Manajemen Pengguna (`/users`)** — *Admin*
+   - Daftarkan akun Penulis atau User Penglihat baru, ubah role, dan hapus akun pengguna.
 
-## Agentic Development
+---
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Data Awal (Database Seeder)
 
-```bash
-composer require laravel/boost --dev
+Perintah `php artisan migrate:fresh --seed` akan otomatis mengisi:
+- **3 Akun Pengguna** (`Admin`, `Penulis`, `User Penglihat`)
+- **5 Kategori Berita** (*Teknologi & AI*, *Pendidikan & Kampus*, *Ekonomi Digital*, *Olahraga*, *Sains & Lingkungan*)
+- **12 Artikel Berita Contoh** lengkap dengan ringkasan, isi berita multi-paragraf, kategori, dan jumlah pembaca.
 
-php artisan boost:install
-```
+---
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Cara Menjalankan Proyek
 
-## Contributing
+1. **Pastikan PHP & Composer sudah terpasang:**
+   ```bash
+   php -v
+   composer -V
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. **Install dependensi Composer:**
+   ```bash
+   composer install
+   ```
 
-## Code of Conduct
+3. **Salin konfigurasi environment & generate app key:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. **Buat file database SQLite (jika menggunakan SQLite) & jalankan migrasi beserta Seeder:**
+   ```bash
+   touch database/database.sqlite
+   php artisan migrate:fresh --seed
+   ```
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+5. **Jalankan server lokal:**
+   ```bash
+   php artisan serve
+   ```
+   Buka `http://127.0.0.1:8000` di browser Anda.
