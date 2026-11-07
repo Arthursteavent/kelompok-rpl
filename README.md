@@ -1,4 +1,4 @@
-# PortalBerita - Aplikasi Portal Informasi & Blog Mini (Proyek Kelompok RPL)
+# Narasi Digital - Aplikasi Portal Informasi & Blog Mini (Proyek Kelompok RPL)
 
 Aplikasi web portal berita berbasis **Laravel** dan **Tailwind CSS** (mendukung *Tema Terang & Gelap / Dark Mode*), dilengkapi sistem **Autentikasi Multi-Role** (Admin, Penulis, dan User Penglihat), keamanan **UUID** pada seluruh tabel, manajemen artikel (CRUD), manajemen kategori berita, serta manajemen pengguna.
 
@@ -10,9 +10,9 @@ Setelah menjalankan migrasi dan seeder database (`php artisan migrate:fresh --se
 
 | Role | Nama Pengguna | Email | Password | Hak Akses |
 | :--- | :--- | :--- | :--- | :--- |
-| **Admin** | `Admin PortalBerita` | `admin@portalberita.com` | `password` | Akses penuh: CRUD Artikel, CRUD Kategori, Kelola/Daftarkan Akun Penulis & User, serta membaca berita. |
-| **Penulis** | `Penulis Redaksi` | `penulis@portalberita.com` | `password` | Menulis artikel baru, mengedit & mengelola daftar artikel (CRUD Artikel), tambah kategori cepat, serta membaca berita. |
-| **User Penglihat** | `User Penglihat` | `user@portalberita.com` | `password` | Membaca berita, memfilter kategori, dan mencari artikel (pengunjung juga dapat membaca berita tanpa login). |
+| **Admin** | `Admin Narasi Digital` | `admin@narasidigital.com` | `password` | Akses penuh: CRUD Artikel, CRUD Kategori, Kelola/Daftarkan Akun Penulis & User, serta membaca berita. |
+| **Penulis** | `Penulis Narasi Digital` | `penulis@narasidigital.com` | `password` | Menulis artikel baru, mengedit & mengelola daftar artikel (CRUD Artikel), tambah kategori cepat, serta membaca berita. |
+| **User Penglihat** | `User Narasi Digital` | `user@narasidigital.com` | `password` | Membaca berita, memfilter kategori, dan mencari artikel (pengunjung juga dapat membaca berita tanpa login). |
 
 > **Catatan:** Pendaftaran akun melalui halaman publik (`/register`) otomatis terdaftar sebagai **User Penglihat**. Penambahan akun dengan role **Penulis** atau **Admin** hanya dapat dilakukan oleh Admin melalui menu **Daftar Penulis/User** (`/users`).
 

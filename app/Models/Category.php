@@ -31,15 +31,7 @@ class Category extends Model
      */
     public function tailwindBadgeClass(): string
     {
-        return match ($this->color) {
-            'primary' => 'bg-blue-600 text-white',
-            'success' => 'bg-emerald-600 text-white',
-            'danger' => 'bg-rose-600 text-white',
-            'warning' => 'bg-amber-500 text-slate-950',
-            'info' => 'bg-sky-500 text-white',
-            'dark' => 'bg-slate-800 text-white dark:bg-slate-700',
-            default => 'bg-slate-600 text-white',
-        };
+        return 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700';
     }
 }
 

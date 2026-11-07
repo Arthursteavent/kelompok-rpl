@@ -1,40 +1,29 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola & Daftarkan User/Penulis (Admin) - PortalBerita')
+@section('title', 'Kelola User - Narasi Digital')
 
 @section('content')
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                <i class="bi bi-people-fill text-blue-600 dark:text-sky-400"></i>
-                <span>Manajemen Akun & Pendaftaran Penulis/User (Khusus Admin)</span>
-            </h1>
-            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-                Hanya <strong>Admin</strong> yang dapat mendaftarkan akun sebagai <strong>Penulis</strong> atau <strong>User Penglihat</strong> serta mengatur role pengguna.
-            </p>
+            <h1 class="text-xl font-bold text-zinc-900 dark:text-white">Manajemen Akun & Pendaftaran Penulis/User</h1>
+            <p class="text-xs text-zinc-500 mt-0.5">Khusus Admin untuk mendaftarkan Penulis atau User serta mengatur role pengguna.</p>
         </div>
 
-        <a href="{{ route('articles.index') }}" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
-            <i class="bi bi-journal-text mr-1"></i>Ke Tabel Artikel
+        <a href="{{ route('articles.index') }}" class="text-xs text-zinc-500 hover:underline">
+            &larr; Ke Daftar Artikel
         </a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <!-- Form Daftarkan Penulis / User Baru -->
         <div class="lg:col-span-4">
-            <div class="rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-                <h5 class="text-base font-extrabold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                    <i class="bi bi-person-plus-fill text-blue-600 dark:text-sky-400"></i>
-                    <span>Daftarkan Penulis / User</span>
-                </h5>
+            <div class="rounded-2xl p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                <h5 class="text-sm font-bold text-zinc-900 dark:text-white mb-4">Daftarkan Penulis / User</h5>
 
                 <form action="{{ route('users.store') }}" method="POST" class="space-y-4">
                     @csrf
 
                     <div>
-                        <label for="name" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">
-                            Nama Lengkap <span class="text-rose-500">*</span>
-                        </label>
+                        <label for="name" class="block text-xs font-semibold mb-1">Nama Lengkap *</label>
                         <input
                             type="text"
                             id="name"
@@ -42,161 +31,169 @@
                             value="{{ old('name') }}"
                             placeholder="Masukkan nama lengkap..."
                             required
-                            class="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="w-full px-3.5 py-2 rounded-lg text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 placeholder-zinc-400 focus:outline-none"
                         >
                     </div>
 
                     <div>
-                        <label for="email" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">
-                            Alamat Email <span class="text-rose-500">*</span>
-                        </label>
+                        <label for="email" class="block text-xs font-semibold mb-1">Email *</label>
                         <input
                             type="email"
                             id="email"
                             name="email"
                             value="{{ old('email') }}"
-                            placeholder="nama@portalberita.com"
+                            placeholder="nama@email.com"
                             required
-                            class="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="w-full px-3.5 py-2 rounded-lg text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 placeholder-zinc-400 focus:outline-none"
                         >
                     </div>
 
                     <div>
-                        <label for="role" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">
-                            Daftar Sebagai Role <span class="text-rose-500">*</span>
-                        </label>
+                        <label for="role" class="block text-xs font-semibold mb-1">Role *</label>
                         <select
                             id="role"
                             name="role"
                             required
-                            class="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="w-full px-3.5 py-2 rounded-lg text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 focus:outline-none"
                         >
-                            <option value="penulis" @selected(old('role', 'penulis') === 'penulis')>
-                                Penulis (Bisa Tulis & Kelola Artikel)
-                            </option>
-                            <option value="penglihat" @selected(old('role') === 'penglihat')>
-                                User Penglihat (Pembaca Berita)
-                            </option>
+                            <option value="penulis" @selected(old('role', 'penulis') === 'penulis')>Penulis</option>
+                            <option value="penglihat" @selected(old('role') === 'penglihat')>User Penglihat</option>
                         </select>
                     </div>
 
                     <div>
-                        <label for="password" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">
-                            Password Akun <span class="text-rose-500">*</span>
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Minimal 6 karakter"
-                            required
-                            class="w-full px-3.5 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
+                        <label for="password" class="block text-xs font-semibold mb-1">Password *</label>
+                        <div class="relative">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Min. 6 karakter"
+                                required
+                                class="w-full pl-3.5 pr-10 py-2 rounded-lg text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 placeholder-zinc-400 focus:outline-none"
+                            >
+                            <button
+                                type="button"
+                                onclick="togglePassword('password', this)"
+                                class="absolute inset-y-0 right-0 flex items-center px-3 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer"
+                                aria-label="Lihat password"
+                            >
+                                <svg class="eye-open w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                </svg>
+                                <svg class="eye-closed w-4 h-4 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
-                    <button type="submit" class="w-full py-2.5 rounded-full text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-sm transition cursor-pointer">
-                        <i class="bi bi-plus-lg mr-1"></i>Daftarkan Akun
+                    <button type="submit" class="w-full py-2 rounded-lg text-xs font-semibold bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 cursor-pointer">
+                        Daftarkan Akun
                     </button>
                 </form>
             </div>
         </div>
 
-        <!-- Tabel Daftar Semua Akun Pengguna -->
         <div class="lg:col-span-8">
-            <div class="rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="rounded-xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse text-sm">
                         <thead>
-                            <tr class="bg-slate-100/80 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
-                                <th class="py-3.5 pl-6 pr-3 w-28">UUID</th>
-                                <th class="py-3.5 px-3">Nama & Email</th>
-                                <th class="py-3.5 px-3">Role</th>
-                                <th class="py-3.5 px-3">Terdaftar</th>
-                                <th class="py-3.5 pl-3 pr-6 text-right">Aksi</th>
+                            <tr class="bg-zinc-50 dark:bg-zinc-800/50 text-zinc-500 text-xs border-b border-zinc-200 dark:border-zinc-800">
+                                <th class="py-3 pl-5 pr-3 w-28">UUID</th>
+                                <th class="py-3 px-3">Nama & Email</th>
+                                <th class="py-3 px-3">Role</th>
+                                <th class="py-3 px-3">Terdaftar</th>
+                                <th class="py-3 pl-3 pr-5 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                        <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
                             @forelse ($users as $u)
-                                @php
-                                    $uBadge = match($u->role) {
-                                        'admin' => 'bg-rose-600 text-white',
-                                        'penulis' => 'bg-blue-600 text-white',
-                                        default => 'bg-emerald-600 text-white',
-                                    };
-                                @endphp
-                                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
-                                    <td class="py-4 pl-6 pr-3 text-xs font-mono text-slate-400" title="{{ $u->id }}">
+                                <tr>
+                                    <td class="py-3.5 pl-5 pr-3 text-xs font-mono text-zinc-400" title="{{ $u->id }}">
                                         {{ substr($u->id, 0, 8) }}&hellip;
                                     </td>
-                                    <td class="py-4 px-3">
-                                        <div class="font-bold text-slate-900 dark:text-white">{{ $u->name }}</div>
-                                        <div class="text-xs text-slate-500 dark:text-slate-400">{{ $u->email }}</div>
+                                    <td class="py-3.5 px-3">
+                                        <div class="font-semibold text-zinc-900 dark:text-white">{{ $u->name }}</div>
+                                        <div class="text-xs text-zinc-400">{{ $u->email }}</div>
                                     </td>
-                                    <td class="py-4 px-3">
-                                        <span class="px-3 py-1 rounded-full text-xs font-bold {{ $uBadge }}">
+                                    <td class="py-3.5 px-3 text-xs">
+                                        <span class="px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium">
                                             {{ $u->roleLabel() }}
                                         </span>
                                     </td>
-                                    <td class="py-4 px-3 text-xs text-slate-500 dark:text-slate-400">
+                                    <td class="py-3.5 px-3 text-xs text-zinc-500">
                                         {{ $u->created_at?->translatedFormat('d M Y') ?? '-' }}
                                     </td>
-                                    <td class="py-4 pl-3 pr-6 text-right">
-                                        <div class="inline-flex items-center gap-1.5">
+                                    <td class="py-3.5 pl-3 pr-5 text-right text-xs">
+                                        <div class="inline-flex items-center gap-2">
                                             <button
                                                 type="button"
                                                 onclick="openModal('editUserModal{{ $u->id }}')"
-                                                class="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:hover:bg-blue-900/60 text-blue-600 dark:text-sky-400 transition cursor-pointer"
-                                                title="Edit User / Ubah Role"
+                                                class="text-zinc-700 dark:text-zinc-300 hover:underline cursor-pointer"
                                             >
-                                                <i class="bi bi-pencil-square"></i>
+                                                Edit
                                             </button>
 
                                             @if (auth()->id() !== $u->id)
                                                 <form action="{{ route('users.destroy', $u) }}" method="POST" onsubmit="return confirm('Hapus akun {{ $u->name }}?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="p-2 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 transition cursor-pointer" title="Hapus Akun">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
+                                                    <button type="submit" class="text-red-600 dark:text-red-400 hover:underline cursor-pointer">Hapus</button>
                                                 </form>
                                             @endif
                                         </div>
 
-                                        <!-- Modal Edit User & Role -->
-                                        <div id="editUserModal{{ $u->id }}" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 text-left">
-                                            <div class="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-6">
+                                        <div id="editUserModal{{ $u->id }}" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 text-left">
+                                            <div class="w-full max-w-md rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6">
                                                 <div class="flex items-center justify-between mb-4">
-                                                    <h5 class="text-base font-extrabold text-slate-900 dark:text-white">Edit Akun: {{ $u->name }}</h5>
-                                                    <button type="button" onclick="closeModal('editUserModal{{ $u->id }}')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
-                                                        <i class="bi bi-x-lg"></i>
-                                                    </button>
+                                                    <h5 class="text-sm font-bold">Edit Akun</h5>
+                                                    <button type="button" onclick="closeModal('editUserModal{{ $u->id }}')" class="text-xs text-zinc-400 cursor-pointer">Tutup</button>
                                                 </div>
-                                                <form action="{{ route('users.update', $u) }}" method="POST" class="space-y-4">
+                                                <form action="{{ route('users.update', $u) }}" method="POST" class="space-y-3">
                                                     @csrf
                                                     @method('PUT')
                                                     <div>
-                                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Nama Lengkap</label>
-                                                        <input type="text" name="name" value="{{ $u->name }}" required class="w-full px-3.5 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
+                                                        <label class="block text-xs font-semibold mb-1">Nama Lengkap</label>
+                                                        <input type="text" name="name" value="{{ $u->name }}" required class="w-full px-3 py-2 rounded-lg text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700">
                                                     </div>
                                                     <div>
-                                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Email</label>
-                                                        <input type="email" name="email" value="{{ $u->email }}" required class="w-full px-3.5 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
+                                                        <label class="block text-xs font-semibold mb-1">Email</label>
+                                                        <input type="email" name="email" value="{{ $u->email }}" required class="w-full px-3 py-2 rounded-lg text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700">
                                                     </div>
                                                     <div>
-                                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Role Pengguna</label>
-                                                        <select name="role" required class="w-full px-3.5 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
+                                                        <label class="block text-xs font-semibold mb-1">Role</label>
+                                                        <select name="role" required class="w-full px-3 py-2 rounded-lg text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700">
                                                             <option value="penulis" @selected($u->role === 'penulis')>Penulis</option>
                                                             <option value="penglihat" @selected($u->role === 'penglihat')>User Penglihat</option>
                                                             <option value="admin" @selected($u->role === 'admin')>Admin</option>
                                                         </select>
                                                     </div>
                                                     <div>
-                                                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Password Baru (Kosongkan jika tidak diubah)</label>
-                                                        <input type="password" name="password" placeholder="Minimal 6 karakter" class="w-full px-3.5 py-2 rounded-xl text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
+                                                        <label class="block text-xs font-semibold mb-1">Password Baru (Opsional)</label>
+                                                        <div class="relative">
+                                                            <input type="password" id="passwordEdit{{ $u->id }}" name="password" placeholder="Kosongkan jika tidak diubah" class="w-full pl-3 pr-10 py-2 rounded-lg text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 placeholder-zinc-400 focus:outline-none">
+                                                            <button
+                                                                type="button"
+                                                                onclick="togglePassword('passwordEdit{{ $u->id }}', this)"
+                                                                class="absolute inset-y-0 right-0 flex items-center px-3 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer"
+                                                                aria-label="Lihat password"
+                                                            >
+                                                                <svg class="eye-open w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                                                </svg>
+                                                                <svg class="eye-closed w-4 h-4 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                     <div class="flex justify-end gap-2 pt-2">
-                                                        <button type="button" onclick="closeModal('editUserModal{{ $u->id }}')" class="px-4 py-2 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer">Batal</button>
-                                                        <button type="submit" class="px-4 py-2 rounded-full text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white cursor-pointer">Simpan Perubahan</button>
+                                                        <button type="button" onclick="closeModal('editUserModal{{ $u->id }}')" class="px-3.5 py-1.5 rounded-lg text-xs border border-zinc-300 dark:border-zinc-700 cursor-pointer">Batal</button>
+                                                        <button type="submit" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 cursor-pointer">Simpan</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -205,7 +202,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="py-10 text-center text-slate-400">Belum ada data pengguna.</td>
+                                    <td colspan="5" class="py-10 text-center text-zinc-400 text-xs">Belum ada data pengguna.</td>
                                 </tr>
                             @endforelse
                         </tbody>
