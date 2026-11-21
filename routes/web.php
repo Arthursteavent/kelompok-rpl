@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
@@ -29,8 +30,14 @@ Route::middleware(['auth', 'role:admin,penulis'])->group(function () {
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
 });
 
-// Halaman Khusus Role "admin": Manajemen Kategori & Pendaftaran Penulis/User
+// Halaman Khusus Role "admin": Manajemen Kategori, Pendaftaran Penulis/User & Audit Trail
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('categories', CategoryController::class)->only(['index', 'update', 'destroy']);
     Route::resource('users', UserController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::get('/audits', [AuditController::class, 'index'])->name('audits.index');
+});
+
+// Fallback 404 untuk URL yang tidak ditemukan
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
 });

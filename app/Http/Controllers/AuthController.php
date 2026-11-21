@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Audit;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -37,10 +38,26 @@ class AuthController extends Controller
             /** @var User $user */
             $user = Auth::user();
 
+            Audit::logAction(
+                event: 'login',
+                auditable: $user,
+                newValues: ['email' => $user->email, 'role' => $user->role],
+                tags: 'Auth:login',
+                label: "{$user->name} ({$user->email})",
+                actor: $user
+            );
+
             return redirect()
                 ->intended(route('home'))
                 ->with('success', "Selamat datang, {$user->name}! Anda login sebagai {$user->roleLabel()}.");
         }
+
+        Audit::logAction(
+            event: 'login_failed',
+            newValues: ['email' => $credentials['email']],
+            tags: 'Auth:login_failed',
+            label: $credentials['email']
+        );
 
         return back()
             ->withErrors(['email' => 'Email atau password yang Anda masukkan salah.'])
@@ -77,6 +94,15 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
+        Audit::logAction(
+            event: 'register',
+            auditable: $user,
+            newValues: ['name' => $user->name, 'email' => $user->email, 'role' => $user->role],
+            tags: 'Auth:register',
+            label: "{$user->name} ({$user->email})",
+            actor: $user
+        );
+
         return redirect()
             ->route('home')
             ->with('success', "Akun berhasil dibuat! Selamat datang, {$user->name} (User Penglihat).");
@@ -87,6 +113,19 @@ class AuthController extends Controller
      */
     public function logout(Request $request): RedirectResponse
     {
+        /** @var User|null $user */
+        $user = Auth::user();
+        if ($user) {
+            Audit::logAction(
+                event: 'logout',
+                auditable: $user,
+                oldValues: ['email' => $user->email, 'role' => $user->role],
+                tags: 'Auth:logout',
+                label: "{$user->name} ({$user->email})",
+                actor: $user
+            );
+        }
+
         Auth::logout();
 
         $request->session()->invalidate();

@@ -59,16 +59,6 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between text-xs">
-                    <label class="inline-flex items-center gap-2 text-zinc-600 dark:text-zinc-400 cursor-pointer">
-                        <input type="checkbox" name="remember">
-                        <span>Ingat saya</span>
-                    </label>
-                    <a href="{{ route('register') }}" class="font-medium text-zinc-900 dark:text-white hover:underline">
-                        Daftar sebagai User
-                    </a>
-                </div>
-
                 <div class="space-y-2 pt-2">
                     <button type="submit" class="w-full py-2.5 rounded-lg text-xs font-semibold bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 cursor-pointer">
                         Masuk
@@ -76,6 +66,13 @@
 
                     <a href="{{ route('home') }}" class="block w-full text-center py-2.5 rounded-lg text-xs font-medium border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800">
                         Lanjut Tanpa Login
+                    </a>
+                </div>
+
+                <div class="text-center pt-3 border-t border-zinc-200 dark:border-zinc-800 text-xs text-zinc-500">
+                    Belum punya akun?
+                    <a href="{{ route('register') }}" class="font-semibold text-zinc-900 dark:text-white hover:underline">
+                        Daftar sebagai User
                     </a>
                 </div>
             </form>

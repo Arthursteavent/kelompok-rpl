@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\Auditable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Article extends Model
 {
-    use HasFactory, HasUuids;
+    use Auditable, HasFactory, HasUuids;
+
+    /**
+     * Abaikan kenaikan counter views publik agar tidak memenuhi log audit.
+     *
+     * @var array<int, string>
+     */
+    protected array $auditExclude = [
+        'views',
+    ];
 
     protected $fillable = [
         'category_id',

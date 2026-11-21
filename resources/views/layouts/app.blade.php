@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Narasi Digital')</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">
+    <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">
 
     <script>
         (function () {
@@ -123,6 +125,9 @@
                                     <a href="{{ route('users.index') }}" class="block px-3.5 py-2 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800">
                                         Kelola User
                                     </a>
+                                    <a href="{{ route('audits.index') }}" class="block px-3.5 py-2 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                                        Audit Trail
+                                    </a>
                                 @endif
 
                                 <form action="{{ route('logout') }}" method="POST" class="border-t border-zinc-100 dark:border-zinc-800 mt-1 pt-1">
@@ -179,6 +184,10 @@
                                class="{{ request()->routeIs('users.*') ? 'text-zinc-900 dark:text-white font-semibold' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white' }}">
                                 Daftar Penulis/User
                             </a>
+                            <a href="{{ route('audits.index') }}"
+                               class="{{ request()->routeIs('audits.*') ? 'text-zinc-900 dark:text-white font-semibold' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white' }}">
+                                Audit Trail
+                            </a>
                         @endif
                     @endauth
                 </div>
@@ -203,7 +212,7 @@
                 </div>
             @endif
 
-            @if ($errors->any())
+            @if (isset($errors) && $errors->any())
                 <div class="mb-6 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-sm">
                     <div class="font-semibold mb-1">Periksa kembali input Anda:</div>
                     <ul class="list-disc list-inside text-xs space-y-0.5">
@@ -258,6 +267,7 @@
                             @endif
                             @if (auth()->user()->isAdmin())
                                 <li><a href="{{ route('users.index') }}" class="hover:text-white">Kelola User</a></li>
+                                <li><a href="{{ route('audits.index') }}" class="hover:text-white">Audit Trail</a></li>
                             @endif
                         @endguest
                     </ul>
